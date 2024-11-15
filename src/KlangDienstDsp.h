@@ -11,25 +11,22 @@
 
 #include <rohrkabel/loop.hpp>
 
+#include "AudioChannel.h"
+
 namespace pw = pipewire;
 
-class EqualizerNode {
+class KlangDienstDsp {
 public:
-    EqualizerNode(std::shared_ptr<pw::main_loop> loop);
-    ~EqualizerNode();
+    KlangDienstDsp(std::shared_ptr<pw::main_loop> loop);
+    ~KlangDienstDsp();
 
 private:
-    enum class Channel {
-        FL,
-        FR,
-    };
-
     friend void on_process(void* userdata, struct spa_io_position* position);
 
-    void onProcess(Channel channel, const std::span<const float>& in, std::span<float>& out);
+    void onProcess(AudioChannel channel, const std::span<const float>& in, std::span<float>& out);
 
     struct port {
-        EqualizerNode *data;
+        KlangDienstDsp *data;
     };
 
     std::shared_ptr<pw::main_loop> _loop;
@@ -38,7 +35,7 @@ private:
     uint8_t _buffer[1024];
     spa_pod_builder _b;
 
-    std::map<Channel, port*> _inPorts;
-    std::map<Channel, port*> _outPorts;
+    std::map<AudioChannel, port*> _inPorts;
+    std::map<AudioChannel, port*> _outPorts;
     std::vector<float> _silence;
 };

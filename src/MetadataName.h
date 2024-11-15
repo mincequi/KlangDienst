@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include <magic_enum.hpp>
 
 enum class MetadataName {

@@ -11,9 +11,7 @@ namespace pw = pipewire;
 
 class KlangDienstSink {
 public:
-    KlangDienstSink(pw::core& core) {
-
-
+    KlangDienstSink(std::shared_ptr<pw::core> core) {
         auto props = pw::properties::create({ {PW_KEY_APP_ID, "KlangDienst"},
                                               {PW_KEY_NODE_NAME, "KlangDienstSink"},
                                               {PW_KEY_NODE_DESCRIPTION, "KlangDienstSink"},
@@ -26,9 +24,8 @@ public:
                                               {"monitor.passthrough", "true"},
                                               {PW_KEY_PRIORITY_SESSION, "0"}
                                             });
-
         _node = static_cast<pw_proxy*>(
-            pw_core_create_object(core,
+            pw_core_create_object(*core,
                                   "adapter",
                                   PW_TYPE_INTERFACE_Node,
                                   PW_VERSION_NODE,

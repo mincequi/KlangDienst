@@ -1,7 +1,5 @@
-#include "EqualizerNode.h"
+#include "KlangDienstDsp.h"
 
-#include <iostream>
-#include <functional>
 #include <map>
 
 #include <magic_enum_utility.hpp>
@@ -14,19 +12,19 @@ using namespace std::placeholders;
 std::vector<float> silence;
 
 void on_process(void* userdata, struct spa_io_position* position) {
-    EqualizerNode* node = (EqualizerNode*)userdata;
+    KlangDienstDsp* node = (KlangDienstDsp*)userdata;
 
     auto sampleCount = position->clock.duration;
     auto sampleRate = position->clock.rate.denom;
 
-    magic_enum::enum_for_each<EqualizerNode::Channel>([&](EqualizerNode::Channel channel) {
+    magic_enum::enum_for_each<AudioChannel>([&](AudioChannel channel) {
         float* in = (float*)pw_filter_get_dsp_buffer(node->_inPorts[channel], sampleCount);
         float* out = (float*)pw_filter_get_dsp_buffer(node->_outPorts[channel], sampleCount);
 
         std::span<const float> inSpan;
         std::span<float> outSpan;
         if (in == nullptr || out == nullptr) {
-            if (silence.size() != sampleCount) {
+            /*if (silence.size() != sampleCount) {
                 silence.resize(sampleCount);
                 for (size_t i = 0; i < sampleCount; i++) {
                     silence[i] = 0.0f;
@@ -34,7 +32,7 @@ void on_process(void* userdata, struct spa_io_position* position) {
             }
             inSpan = std::span<const float>(silence);
             outSpan = std::span<float>(silence);
-            std::cerr << "playing silence" << std::endl;
+            std::cerr << "playing silence" << std::endl;*/
         } else {
             inSpan = std::span<const float>(in, sampleCount);
             outSpan = std::span<float>(out, sampleCount);
@@ -45,14 +43,14 @@ void on_process(void* userdata, struct spa_io_position* position) {
 }
 
 static const struct pw_filter_events filter_events = {
-    PW_VERSION_FILTER_EVENTS,
+    .version = PW_VERSION_FILTER_EVENTS,
     .process = on_process,
 };
 
-EqualizerNode::EqualizerNode(std::shared_ptr<pw::main_loop> loop) : _loop(loop) {
+KlangDienstDsp::KlangDienstDsp(std::shared_ptr<pw::main_loop> loop) : _loop(loop) {
     _filter = pw_filter_new_simple(
                 loop->loop(),
-                "audio-filter",
+                "KlangDienstFilter",
                 pw_properties_new(
                     PW_KEY_MEDIA_TYPE, "Audio",
                     PW_KEY_MEDIA_CATEGORY, "Filter",
@@ -61,7 +59,7 @@ EqualizerNode::EqualizerNode(std::shared_ptr<pw::main_loop> loop) : _loop(loop) 
                 &filter_events,
                 this);
 
-    magic_enum::enum_for_each<EqualizerNode::Channel>([&](EqualizerNode::Channel channel) {
+    magic_enum::enum_for_each<AudioChannel>([&](AudioChannel channel) {
         _inPorts[channel] = (port*)pw_filter_add_port(_filter,
                                                       PW_DIRECTION_INPUT,
                                                       PW_FILTER_PORT_FLAG_MAP_BUFFERS,
@@ -95,10 +93,10 @@ EqualizerNode::EqualizerNode(std::shared_ptr<pw::main_loop> loop) : _loop(loop) 
     }
 }
 
-EqualizerNode::~EqualizerNode() {
+KlangDienstDsp::~KlangDienstDsp() {
     pw_filter_destroy(_filter);
 }
 
-void EqualizerNode::onProcess(Channel channel, const std::span<const float>& in, std::span<float>& out) {
+void KlangDienstDsp::onProcess(AudioChannel channel, const std::span<const float>& in, std::span<float>& out) {
     std::copy(in.begin(), in.end(), out.begin());
 }

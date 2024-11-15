@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
+
 #include <rohrkabel/metadata/metadata.hpp>
 
 #include <rpp/observables/dynamic_observable.hpp>
@@ -8,31 +10,32 @@
 #include <spdlog/spdlog.h>
 
 #include "MetadataName.h"
-#include "Repository.h"
+#include "Registry.h"
 
 using namespace spdlog;
+using json = nlohmann::json;
 
 template <MetadataName N>
-class MetadataRepository {
+class MetadataRegistry {
 public:
-    MetadataRepository(Repository<pw::metadata>& metadataRepository) {
+    MetadataRegistry(Registry<pw::metadata>& metadataRepository) {
         metadataRepository.proxyAdded().subscribe([&](const pw::metadata& node) {
             if (!isName(node)) return;
 
-            _metadata.emplace(node.id(), metadataRepository.bind(node.id()));
+            _nodes.emplace(node.id(), metadataRepository.bind(node.id()));
             _metadataAddedSubject.get_observer().on_next(node);
         });
 
         metadataRepository.proxyRemoved().subscribe([this](const pw::metadata& node) {
-            if (!_metadata.contains(node.id())) return;
+            if (!_nodes.contains(node.id())) return;
 
-            _metadata.erase(node.id());
+            _nodes.erase(node.id());
             _metadataRemovedSubject.get_observer().on_next(node);
         });
     }
 
     inline const std::map<std::uint32_t, pw::metadata>& metadata() const {
-        return _metadata;
+        return _nodes;
     }
 
     inline const rpp::dynamic_observable<pw::metadata> metadataAdded() const {
@@ -43,14 +46,16 @@ public:
         return _metadataRemovedSubject.get_observable();
     }
 
-    inline void setDefaultSink(const std::string& sink) const {
-        for (auto& [id, metadata] : _metadata) {
+    inline void setDefaultSink(const std::string& sinkName) const {
+        for (auto& [id, metadata] : _nodes) {
             if (metadata.properties().contains("default.audio.sink")) {
-                metadata.set_property(id,
-                                      "default.audio.sink",
+                json sinkJson;
+                sinkJson["name"] = sinkName;
+                metadata.set_property(0, //id,
+                                      "default.configured.audio.sink",
                                       metadata.properties().at("default.audio.sink").type,
-                                      sink);
-                info("MetadataRepository> set default audio sink: {}", sink);
+                                      sinkJson.dump());
+                info("MetadataRepository> setDefaultSink: {}", sinkName);
                 return;
             }
         }
@@ -59,13 +64,15 @@ public:
 
 private:
     static bool isName(const pw::metadata& node) {
-        if (!node.props().contains("metadata.name")) return false;
-        if (node.props().at("metadata.name") != toString(N)) return false;
+        auto type = "metadata.name";
+
+        if (!node.props().contains(type)) return false;
+        if (node.props().at(type) != toString(N)) return false;
 
         return true;
     }
 
-    mutable std::map<std::uint32_t, pw::metadata> _metadata;
+    mutable std::map<std::uint32_t, pw::metadata> _nodes;
     rpp::subjects::publish_subject<pw::metadata> _metadataAddedSubject;
     rpp::subjects::publish_subject<pw::metadata> _metadataRemovedSubject;
 };

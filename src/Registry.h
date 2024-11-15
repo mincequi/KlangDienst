@@ -19,15 +19,15 @@ concept IsProxy = requires {
 };
 
 template <IsProxy T>
-class Repository {
+class Registry {
 public:
     using U = std::pair<pw::global, T>;
 
-    Repository(pw::registry& registry) :
+    Registry(pw::registry& registry) :
         _registry(registry),
         _listener(_registry.listen()) {
-        _listener.on<pipewire::registry_event::global>(std::bind(&Repository::onGlobal, this, ph::_1));
-        _listener.on<pipewire::registry_event::global_removed>(std::bind(&Repository::onGlobalRemoved, this, ph::_1));
+        _listener.on<pipewire::registry_event::global>(std::bind(&Registry::onGlobal, this, ph::_1));
+        _listener.on<pipewire::registry_event::global_removed>(std::bind(&Registry::onGlobalRemoved, this, ph::_1));
     }
 
     inline const rpp::dynamic_observable<T> proxyAdded() const {
@@ -42,15 +42,20 @@ public:
         return *_registry.bind<T>(id).get();
     }
 
+    inline const std::map<std::uint32_t, T>& proxies() const {
+        return _proxies;
+    }
+
 private:
     void onGlobal(const pw::global& global) {
         if (global.type != T::type) return;
 
+        /*
         info("Repository> onGlobal: {}", global.id);
-        info("perm: {:x}", global.permissions);
+        info("perm: {}", global.permissions);
         for (const auto& p : global.props) {
             info("  {}: {}", p.first, p.second);
-        }
+        }*/
 
         _proxies.emplace(global.id, *_registry.bind<T>(global.id).get());
         //_proxies.emplace(global.id, std::make_pair(global, *_registry.bind<T>(global.id).get()));
