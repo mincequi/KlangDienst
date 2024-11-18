@@ -11,16 +11,18 @@ add_executable(KlangDienst
   src/AudioChannel.h
   src/KlangDienstDsp.h
   src/KlangDienstDsp.cpp
-  src/Registry.h
-  src/MediaClass.h
-  src/NodeRegistry.h
-  src/MetadataName.h
-  src/MetadataRegistry.h
-  src/Graph.h
   src/KlangDienstSink.h
+  src/MediaClass.h
   src/MediaRole.h
-  src/PortRegistry.h
-  src/use_cases/LinkNodesUseCase.h
+  src/MetadataName.h
+  src/Util.h
+  src/registries/KlangDienstRegistry.h
+  src/registries/MetadataRegistry.h
+  src/registries/NodeRegistry.h
+  src/registries/PortRegistry.h
+  src/registries/Registry.h
+  src/usecases/BuildGraphUseCase.h
+  src/usecases/LinkNodesUseCase.h
 )
 
 # add dependencies

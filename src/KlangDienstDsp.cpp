@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <magic_enum_utility.hpp>
+#include <magic_enum/magic_enum_utility.hpp>
 
 #include <spa/param/latency-utils.h>
 #include <spa/param/latency.h>
@@ -50,7 +50,7 @@ static const struct pw_filter_events filter_events = {
 KlangDienstDsp::KlangDienstDsp(std::shared_ptr<pw::main_loop> loop) : _loop(loop) {
     _filter = pw_filter_new_simple(
                 loop->loop(),
-                "KlangDienstFilter",
+                "KlangDienstDsp",
                 pw_properties_new(
                     PW_KEY_MEDIA_TYPE, "Audio",
                     PW_KEY_MEDIA_CATEGORY, "Filter",

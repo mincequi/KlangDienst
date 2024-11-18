@@ -1,6 +1,6 @@
 #pragma once
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <rohrkabel/node/node.hpp>
 #include <rohrkabel/port/port.hpp>
 #include <rpp/observables/dynamic_observable.hpp>
@@ -28,12 +28,12 @@ public:
     }
 
     // Get port for a specific node, direction and channel
-    std::optional<pw::port_info> port(const pw::node& node,
+    std::optional<pw::port_info> port(std::uint32_t nodeId,
                                       pw::port_direction direction,
                                       AudioChannel channel) const {
         for (const auto& [id, port] : _ports) {
             if (port.props().contains("node.id") &&
-                std::stoul(port.props().at("node.id")) == node.id() &&
+                std::stoul(port.props().at("node.id")) == nodeId &&
                 port.info().direction == direction &&
                 port.props().contains("audio.channel") &&
                 port.props().at("audio.channel") == magic_enum::enum_name(channel)) {

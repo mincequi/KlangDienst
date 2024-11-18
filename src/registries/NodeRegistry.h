@@ -1,6 +1,6 @@
 #pragma once
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 
 #include <rohrkabel/node/node.hpp>
 
@@ -18,27 +18,37 @@ public:
             if (!isRelevant(node)) return;
 
             _nodes.emplace(node.id(), nodeRepository.bind(node.id()));
-            _mediaAddedSubject.get_observer().on_next(node);
+            _nodeAddedSubject.get_observer().on_next(node);
         });
 
         nodeRepository.proxyRemoved().subscribe([this](const pw::node& node) {
             if (!_nodes.contains(node.id())) return;
 
             _nodes.erase(node.id());
-            _mediaRemovedSubject.get_observer().on_next(node);
+            _nodeRemovedSubject.get_observer().on_next(node);
         });
     }
 
-    inline const std::map<std::uint32_t, pw::node>& media() const {
+    inline const std::map<std::uint32_t, pw::node>& nodes() const {
         return _nodes;
     }
 
-    inline const rpp::dynamic_observable<pw::node> mediaAdded() const {
-        return _mediaAddedSubject.get_observable();
+    inline std::optional<pw::node_info> nodeInfo(const std::string& name) const {
+        for (const auto& [id, node] : _nodes) {
+            if (node.props().contains("node.name") &&
+                node.props().at("node.name") == name) {
+                return node.info();
+            }
+        }
+        return std::nullopt;
     }
 
-    inline const rpp::dynamic_observable<pw::node> mediaRemoved() const {
-        return _mediaRemovedSubject.get_observable();
+    inline const rpp::dynamic_observable<pw::node> nodeAdded() const {
+        return _nodeAddedSubject.get_observable();
+    }
+
+    inline const rpp::dynamic_observable<pw::node> nodeRemoved() const {
+        return _nodeRemovedSubject.get_observable();
     }
 
 private:
@@ -77,6 +87,6 @@ private:
 
     std::string _nameFilter;
     std::map<std::uint32_t, pw::node> _nodes;
-    rpp::subjects::publish_subject<pw::node> _mediaAddedSubject;
-    rpp::subjects::publish_subject<pw::node> _mediaRemovedSubject;
+    rpp::subjects::publish_subject<pw::node> _nodeAddedSubject;
+    rpp::subjects::publish_subject<pw::node> _nodeRemovedSubject;
 };
