@@ -28,6 +28,7 @@ add_executable(KlangDienst
   src/Biquad.cpp
   src/FilterParams.h
   src/Filter.cpp
+  src/webserver/WebServer.h src/webserver/WebServer.cpp
 )
 
 # add dependencies
@@ -48,6 +49,7 @@ PRIVATE
   spdlog::spdlog
   RPP::rpp
   nlohmann_json::nlohmann_json
+  drogon
 )
 
 include(GNUInstallDirs)

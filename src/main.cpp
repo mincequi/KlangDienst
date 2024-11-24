@@ -1,5 +1,3 @@
-#include <rpp/observables/dynamic_observable.hpp>
-
 #include <rohrkabel/context.hpp>
 #include <rohrkabel/loop.hpp>
 #include <rohrkabel/core/core.hpp>
@@ -8,7 +6,7 @@
 #include <rohrkabel/node/node.hpp>
 #include <rohrkabel/port/port.hpp>
 #include <rohrkabel/registry/registry.hpp>
-
+#include <rpp/observables/dynamic_observable.hpp>
 #include <spdlog/spdlog.h>
 
 #include "KlangDienstDsp.h"
@@ -21,6 +19,7 @@
 #include "registries/PortRegistry.h"
 #include "usecases/BuildGraphUseCase.h"
 #include "usecases/LinkNodesUseCase.h"
+#include "webserver/WebServer.h"
 
 bool doRun = true;
 
@@ -70,6 +69,9 @@ int main(int argc, char *argv[]) {
     KlangDienstRegistry klangDienstRegistry(defaultMetadataRegistry, audioSinkRegistry, dspRegistry);
     LinkNodesUseCase linkNodesUseCase(core, portRegistryProxy);
     BuildGraphUseCase buildGraphUseCase(defaultMetadataRegistry, klangDienstRegistry, linkNodesUseCase);
+
+    WebServer webServer(dsp);
+    webServer.start();
 
     pw_loop_enter(main_loop->loop());
     while (doRun) {
