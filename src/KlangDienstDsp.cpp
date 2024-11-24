@@ -3,11 +3,12 @@
 #include <map>
 
 #include <magic_enum/magic_enum_utility.hpp>
-
 #include <spa/param/latency-utils.h>
 #include <spa/param/latency.h>
+#include <spdlog/spdlog.h>
 
 using namespace std::placeholders;
+using namespace spdlog;
 
 std::vector<float> silence;
 
@@ -16,6 +17,7 @@ void on_process(void* userdata, struct spa_io_position* position) {
 
     auto sampleCount = position->clock.duration;
     auto sampleRate = position->clock.rate.denom;
+    node->setSampleRate(sampleRate);
 
     magic_enum::enum_for_each<AudioChannel>([&](AudioChannel channel) {
         float* in = (float*)pw_filter_get_dsp_buffer(node->_inPorts[channel], sampleCount);
@@ -97,6 +99,32 @@ KlangDienstDsp::~KlangDienstDsp() {
     pw_filter_destroy(_filter);
 }
 
-void KlangDienstDsp::onProcess(AudioChannel channel, const std::span<const float>& in, std::span<float>& out) {
+void KlangDienstDsp::setFilterParams(uint8_t index, const FilterParams& filterParams) {
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (index >= _filters.size()) {
+        _filters.resize(index + 1);
+    }
+    _filters[index].setFilterParams(filterParams);
+}
+
+void KlangDienstDsp::setSampleRate(uint32_t sampleRate) {
+    if (_sampleRate == sampleRate) {
+        return;
+    }
+    _sampleRate = sampleRate;
+    info("sample rate changed to {}", _sampleRate);
+
+    for (auto& filter : _filters) {
+        filter.setSampleRate(sampleRate);
+    }
+}
+
+void KlangDienstDsp::onProcess(AudioChannel channel, const std::span<const float>& in, const std::span<float>& out) {
+    std::lock_guard<std::mutex> lock(_mutex);
     std::copy(in.begin(), in.end(), out.begin());
+
+    for (auto& filter : _filters) {
+        if (filter.isValid())
+            filter.onProcess(channel, in, out);
+    }
 }

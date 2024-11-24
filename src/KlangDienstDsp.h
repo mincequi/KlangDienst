@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <mutex>
 #include <span>
 #include <vector>
 
@@ -12,6 +13,7 @@
 #include <rohrkabel/loop.hpp>
 
 #include "AudioChannel.h"
+#include "Filter.h"
 
 namespace pw = pipewire;
 
@@ -20,10 +22,13 @@ public:
     KlangDienstDsp(std::shared_ptr<pw::main_loop> loop);
     ~KlangDienstDsp();
 
-private:
-    friend void on_process(void* userdata, struct spa_io_position* position);
+    void setFilterParams(uint8_t index, const FilterParams& filterParams);
 
-    void onProcess(AudioChannel channel, const std::span<const float>& in, std::span<float>& out);
+private:
+    void setSampleRate(uint32_t sampleRate);
+
+    friend void on_process(void* userdata, struct spa_io_position* position);
+    void onProcess(AudioChannel channel, const std::span<const float>& in, const std::span<float>& out);
 
     struct port {
         KlangDienstDsp *data;
@@ -38,4 +43,9 @@ private:
     std::map<AudioChannel, port*> _inPorts;
     std::map<AudioChannel, port*> _outPorts;
     std::vector<float> _silence;
+
+    uint32_t _sampleRate = 0;
+    std::vector<Filter> _filters;
+
+    std::mutex _mutex;
 };

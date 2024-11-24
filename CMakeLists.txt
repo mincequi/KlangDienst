@@ -23,6 +23,11 @@ add_executable(KlangDienst
   src/registries/Registry.h
   src/usecases/BuildGraphUseCase.h
   src/usecases/LinkNodesUseCase.h
+  src/Filter.h
+  src/Biquad.h
+  src/Biquad.cpp
+  src/FilterParams.h
+  src/Filter.cpp
 )
 
 # add dependencies

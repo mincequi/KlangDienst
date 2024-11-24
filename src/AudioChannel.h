@@ -1,6 +1,6 @@
 #pragma once
 
 enum class AudioChannel {
-    FL,
-    FR,
+    FL = 0,
+    FR = 1
 };
