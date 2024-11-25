@@ -1,2 +1,7 @@
 build/
+*.iml
 *.user*
+*.lock
+.dart_tool
+.metadata
+.idea
