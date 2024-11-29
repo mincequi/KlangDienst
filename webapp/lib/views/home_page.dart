@@ -1,9 +1,10 @@
+import 'package:KlangDienst/views/dynamic_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/eq_controller.dart';
 import '../controllers/filter_manager_controller.dart';
-import 'dynamic_grid_view.dart';
+import 'filter_view.dart';
 import 'widgets/eq_chart.dart';
 import 'widgets/filter_card.dart';
 
@@ -28,35 +29,22 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(title),
-      ),
-      body: DynamicGridView(),
-      /*Column(
-        children: [DynamicGridView()],
-      ),*/
-      /*Column(
-        children: [
-          Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Obx(() {
-                var controller = Get.find<EqController>();
-                return EqChart(
-                  frequencies: controller.frequencies,
-                  gains: controller.gains.value,
-                );
-              }),
-            ),
-          DynamicGridView()
-        ],*/
+      body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Obx(() {
+              var controller = Get.find<EqController>();
+              return EqChart(
+                frequencies: controller.frequencies,
+                gains: controller.gains.value,
+              );
+            }),
+            SizedBox(height: 8),
+            //FilterView()
+            FilterGridPage()
+          ])),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _counter++,
+        onPressed: filtersManager.addFilter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

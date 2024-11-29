@@ -1,9 +1,9 @@
-import 'package:KlangDienst/views/equalizer_view.dart';
+import 'package:KlangDienst/views/eq_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'controllers/eq_controller.dart';
-import 'views/dynamic_grid_view.dart';
+import 'views/filter_view.dart';
 import 'views/filter_screen.dart';
 import 'views/home_page.dart';
 

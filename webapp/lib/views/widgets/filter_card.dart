@@ -11,13 +11,8 @@ class FilterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(8),
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -47,7 +42,7 @@ class FilterCard extends StatelessWidget {
                     )),
               ],
             ),
-            SizedBox(height: 16),
+            //SizedBox(height: 16),
             // Frequency Setting
             _buildSettingRow(
               'Frequency (Hz)',
@@ -55,7 +50,7 @@ class FilterCard extends StatelessWidget {
               controller.incrementFrequency,
               controller.decrementFrequency,
             ),
-            SizedBox(height: 16),
+            //SizedBox(height: 16),
             // Gain Setting
             _buildSettingRow(
               'Gain (dB)',
@@ -63,7 +58,7 @@ class FilterCard extends StatelessWidget {
               controller.incrementGain,
               controller.decrementGain,
             ),
-            SizedBox(height: 16),
+            //SizedBox(height: 16),
             // Q Factor Setting
             _buildSettingRow(
               'Q Factor',

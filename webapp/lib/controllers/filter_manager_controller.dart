@@ -5,6 +5,10 @@ class FilterManagerController extends GetxController {
   var filters = <FilterController>[].obs;
   var filterCount = 0.obs;
 
+  FilterManagerController() {
+    addFilter();
+  }
+
   void addFilter() {
     filterCount++;
     filters.add(FilterController());

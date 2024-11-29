@@ -5,7 +5,7 @@ import '../controllers/eq_controller.dart';
 import '../views/widgets/eq_chart.dart';
 import '../views/widgets/filter_slider.dart';
 
-class EqualizerView extends StatelessWidget {
+class EqView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
