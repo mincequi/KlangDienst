@@ -21,7 +21,6 @@ class HomePage extends StatelessWidget {
   // always marked "final".
 
   final String title;
-  var _counter = 0.obs;
 
   final FilterManagerController filtersManager =
       Get.put(FilterManagerController());
@@ -39,7 +38,7 @@ class HomePage extends StatelessWidget {
                 gains: controller.gains.value,
               );
             }),
-            SizedBox(height: 8),
+            SizedBox(height: 4),
             //FilterView()
             FilterGridPage()
           ])),

@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:KlangDienst/controllers/filter_manager_controller.dart';
 import 'package:KlangDienst/views/widgets/filter_card.dart';
 import 'package:flutter/material.dart';
@@ -22,15 +24,18 @@ class FilterGridPage extends StatelessWidget {
     return Obx(
       () {
         final filters = managerController.filters;
+        var cardWidth = computeCardWidth(screenWidth);
 
         return Expanded(
           // This makes the GridView expand inside a Column.
           child: GridView.builder(
             padding: const EdgeInsets.all(spacing),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columnCount,
-              crossAxisSpacing: spacing,
-              mainAxisSpacing: spacing,
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: cardWidth, //controller.maxCardWidthObs.value,
+              //maxCrossAxisExtent: constraints.maxWidth,
+              mainAxisExtent: _cardHeight, // controller.cardHeight,
+              crossAxisSpacing: 0,
+              mainAxisSpacing: 0,
             ),
             itemCount: filters.length,
             itemBuilder: (context, index) {
@@ -40,11 +45,22 @@ class FilterGridPage extends StatelessWidget {
               final filterController = managerController.filters[index];
 
               // Pass the FilterController to the FilterCard
-              return FilterCard(controller: filterController);
+              return FilterCard(filterController: filterController);
             },
           ),
         );
       },
     );
   }
+
+  double computeCardWidth(double screenWidth) {
+    int cardCount = (screenWidth / _minCardWidth).floor();
+    final calculatedWidth = screenWidth / cardCount;
+    developer
+        .log('screenWidth: $screenWidth, calculatedWidth: $calculatedWidth');
+    return calculatedWidth;
+  }
+
+  final double _minCardWidth = 196;
+  final double _cardHeight = 192;
 }

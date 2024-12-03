@@ -1,105 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '/controllers/filter_controller.dart';
+import 'filter_param.dart';
 
 // The Card that displays each filter
 class FilterCard extends StatelessWidget {
-  final FilterController controller;
+  final FilterController filterController;
 
-  FilterCard({required this.controller});
+  FilterCard({required this.filterController});
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      //color: Colors.blueAccent,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Filter Type Dropdown
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Filter Type:', style: TextStyle(fontSize: 16)),
-                Obx(() => DropdownButton<String>(
-                      value: controller.selectedFilter.value,
-                      items: [
-                        'Low Pass',
-                        'High Pass',
-                        'Band Pass',
-                        'Notch',
+                Obx(() => DropdownMenu<String>(
+                      initialSelection: filterController.type.value,
+                      dropdownMenuEntries: [
+                        'Peaking',
+                        'LowPass',
+                        'HighPass',
+                        'LowShelf',
+                        'HighShelf',
                       ].map((filter) {
-                        return DropdownMenuItem<String>(
+                        return DropdownMenuEntry<String>(
                           value: filter,
-                          child: Text(filter),
+                          label:
+                              filter, // Optional, adds accessibility/description.
+                          //child: Text(filter),
                         );
                       }).toList(),
-                      onChanged: (value) {
+                      onSelected: (value) {
                         if (value != null) {
-                          controller.setFilterType(value);
+                          filterController.setFilterType(value);
                         }
                       },
                     )),
               ],
             ),
-            //SizedBox(height: 16),
-            // Frequency Setting
-            _buildSettingRow(
-              'Frequency (Hz)',
-              controller.frequency,
-              controller.incrementFrequency,
-              controller.decrementFrequency,
-            ),
-            //SizedBox(height: 16),
-            // Gain Setting
-            _buildSettingRow(
-              'Gain (dB)',
-              controller.gain,
-              controller.incrementGain,
-              controller.decrementGain,
-            ),
-            //SizedBox(height: 16),
-            // Q Factor Setting
-            _buildSettingRow(
-              'Q Factor',
-              controller.qFactor,
-              controller.incrementQFactor,
-              controller.decrementQFactor,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Helper Widget to Build Setting Rows
-  Widget _buildSettingRow(
-    String label,
-    Rx<dynamic> value,
-    VoidCallback onIncrement,
-    VoidCallback onDecrement,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(fontSize: 16)),
-        Row(
-          children: [
-            IconButton(
-              onPressed: onDecrement,
-              icon: Icon(Icons.remove),
-            ),
-            Obx(() => Text(
-                  value.value.toStringAsFixed(1),
-                  style: TextStyle(fontSize: 16),
-                )),
-            IconButton(
-              onPressed: onIncrement,
-              icon: Icon(Icons.add),
-            ),
-          ],
-        ),
-      ],
+            FilterParam("F", filterController.freqUnit, filterController.freq,
+                filterController.incFreq, filterController.decFreq),
+            FilterParam("G", filterController.gainUnit, filterController.gain,
+                filterController.incGain, filterController.decGain),
+            FilterParam("Q", filterController.qUnit, filterController.q,
+                filterController.incQ, filterController.decQ),
+          ])),
     );
   }
 }

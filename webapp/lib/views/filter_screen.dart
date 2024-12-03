@@ -31,8 +31,10 @@ class FilterScreen extends StatelessWidget {
               // GridView.builder with dynamic column count
               return GridView.builder(
                 padding: EdgeInsets.all(8),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: cardsPerRow, // Dynamic column count
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 250,
+                  mainAxisExtent: 120,
+                  //crossAxisCount: cardsPerRow, // Dynamic column count
                   crossAxisSpacing: 8.0, // Horizontal space between items
                   mainAxisSpacing: 8.0, // Vertical space between items
                   childAspectRatio: 1.0, // Aspect ratio of each grid item
@@ -40,7 +42,8 @@ class FilterScreen extends StatelessWidget {
                 itemCount:
                     filtersManager.filterCount.value, // Dynamic item count
                 itemBuilder: (context, index) {
-                  return FilterCard(controller: filtersManager.filters[index]);
+                  return FilterCard(
+                      filterController: filtersManager.filters[index]);
                 },
               );
             },

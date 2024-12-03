@@ -29,13 +29,8 @@ class FilterView extends StatelessWidget {
                   .filterCount.value, // Number of items to display
               itemBuilder: (context, index) {
                 return FilterCard(
-                    controller: filtersManager
+                    filterController: filtersManager
                         .filters[index]); // Return a FilterCard widget
-                /*return Card(
-              child: Center(
-                child: Text('Item $index', style: TextStyle(fontSize: 18)),
-              ),
-            );*/
               },
             ));
       },

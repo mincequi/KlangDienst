@@ -1,3 +1,4 @@
+import 'package:KlangDienst/home_test.dart';
 import 'package:KlangDienst/views/eq_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,12 +26,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        dropdownMenuTheme: const DropdownMenuThemeData(
+          textStyle: TextStyle(color: Colors.amber, fontSize: 12),
+        ),
       ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
-      home: HomePage(
-        title: 'KlangDienst',
-      ),
+      home: HomePage(title: 'KlangDienst'),
+      //home: HomePageTest(),
     );
   }
 }
