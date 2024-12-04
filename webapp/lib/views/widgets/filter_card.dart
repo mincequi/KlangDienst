@@ -1,5 +1,7 @@
+import 'package:KlangDienst/models/filter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import '/controllers/filter_controller.dart';
 import 'filter_param.dart';
 
@@ -19,19 +21,19 @@ class FilterCard extends StatelessWidget {
             Row(
               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Obx(() => DropdownMenu<String>(
+                Obx(() => DropdownMenu<FilterType>(
                       initialSelection: filterController.type.value,
                       dropdownMenuEntries: [
-                        'Peaking',
-                        'LowPass',
-                        'HighPass',
-                        'LowShelf',
-                        'HighShelf',
+                        FilterType.Bypass,
+                        FilterType.Peaking,
+                        FilterType.LowPass,
+                        FilterType.HighPass,
+                        FilterType.LowShelf,
+                        FilterType.HighShelf,
                       ].map((filter) {
-                        return DropdownMenuEntry<String>(
+                        return DropdownMenuEntry<FilterType>(
                           value: filter,
-                          label:
-                              filter, // Optional, adds accessibility/description.
+                          label: filter.toString().split('.').last,
                           //child: Text(filter),
                         );
                       }).toList(),

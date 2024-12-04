@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '/controllers/filter_manager_controller.dart';
+import '../services/eq_service.dart';
 import '/views/widgets/filter_card.dart';
 
 class FilterScreen extends StatelessWidget {
-  final FilterManagerController filtersManager =
-      Get.put(FilterManagerController());
+  final EqService filtersManager = Get.put(EqService());
 
   @override
   Widget build(BuildContext context) {

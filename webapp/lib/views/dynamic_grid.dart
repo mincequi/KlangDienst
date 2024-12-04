@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:KlangDienst/controllers/filter_manager_controller.dart';
+import 'package:KlangDienst/services/eq_service.dart';
 import 'package:KlangDienst/views/widgets/filter_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +10,7 @@ class FilterGridPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final managerController = Get.find<FilterManagerController>();
+    final managerController = Get.find<EqService>();
 
     // Ensure controllers are initialized
     //managerController.initializeFilterControllers();
@@ -18,8 +18,6 @@ class FilterGridPage extends StatelessWidget {
     // Screen width and spacing calculations
     final screenWidth = MediaQuery.of(context).size.width;
     const spacing = 0.0;
-    const cardMinWidth = 150.0;
-    final columnCount = (screenWidth / (cardMinWidth + spacing)).floor();
 
     return Obx(
       () {
@@ -31,16 +29,13 @@ class FilterGridPage extends StatelessWidget {
           child: GridView.builder(
             padding: const EdgeInsets.all(spacing),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: cardWidth, //controller.maxCardWidthObs.value,
-              //maxCrossAxisExtent: constraints.maxWidth,
-              mainAxisExtent: _cardHeight, // controller.cardHeight,
+              maxCrossAxisExtent: cardWidth,
+              mainAxisExtent: _cardHeight,
               crossAxisSpacing: 0,
               mainAxisSpacing: 0,
             ),
             itemCount: filters.length,
             itemBuilder: (context, index) {
-              final filter = filters[index];
-
               // Get the FilterController for this specific filter using index
               final filterController = managerController.filters[index];
 

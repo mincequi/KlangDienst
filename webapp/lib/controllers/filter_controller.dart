@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:KlangDienst/models/filter.dart';
+import 'package:KlangDienst/services/filter_service.dart';
 import 'package:get/get.dart';
 
 import '../utils/freq_table.dart';
@@ -7,9 +9,15 @@ import '../utils/freq_table.dart';
 // Controller to manage the states
 // FilterController for individual filter settings
 class FilterController extends GetxController {
-  var type = 'LowPass'.obs;
-  void setFilterType(String type_) {
+  final filterService = Get.find<FilterService>();
+
+  var response = List.filled(121, 0.0).obs;
+
+  // Type
+  var type = FilterType.Bypass.obs;
+  void setFilterType(FilterType type_) {
     type.value = type_;
+    _computeResponse();
   }
 
   // Frequency
@@ -33,6 +41,18 @@ class FilterController extends GetxController {
   final q = '1.0'.obs;
   final qUnit = ''.obs;
 
+  void _computeResponse() {
+    Filter filter = Filter(
+      type: type.value,
+      freqIdx: _freq.value,
+      gain: _gain.value,
+      q: _q.value,
+    );
+    final response = filterService.response(filter);
+    this.response.assignAll(response);
+    this.response.refresh();
+  }
+
   FilterController() {
     ever(_freq, (_) {
       double f = freqs[_freq.value];
@@ -50,9 +70,11 @@ class FilterController extends GetxController {
         freq.value = f.toStringAsFixed(0);
         freqUnit.value = 'Hz';
       }
+      _computeResponse();
     });
     ever(_gain, (_) {
       gain.value = _gain.value.toStringAsFixed(1);
+      _computeResponse();
     });
     ever(_q, (_) {
       if (_q.value >= 10) {
@@ -60,6 +82,7 @@ class FilterController extends GetxController {
       } else {
         q.value = _q.value.toStringAsFixed(2);
       }
+      _computeResponse();
     });
   }
 }

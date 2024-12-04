@@ -2,9 +2,7 @@ import 'package:KlangDienst/views/dynamic_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/eq_controller.dart';
-import '../controllers/filter_manager_controller.dart';
-import 'filter_view.dart';
+import '../services/eq_service.dart';
 import 'widgets/eq_chart.dart';
 import 'widgets/filter_card.dart';
 
@@ -22,8 +20,7 @@ class HomePage extends StatelessWidget {
 
   final String title;
 
-  final FilterManagerController filtersManager =
-      Get.put(FilterManagerController());
+  final EqService _eqService = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -31,19 +28,12 @@ class HomePage extends StatelessWidget {
       body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(children: [
-            Obx(() {
-              var controller = Get.find<EqController>();
-              return EqChart(
-                frequencies: controller.frequencies,
-                gains: controller.gains.value,
-              );
-            }),
-            SizedBox(height: 4),
-            //FilterView()
-            FilterGridPage()
+            EqChart(),
+            const SizedBox(height: 4),
+            const FilterGridPage()
           ])),
       floatingActionButton: FloatingActionButton(
-        onPressed: filtersManager.addFilter,
+        onPressed: _eqService.addFilter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

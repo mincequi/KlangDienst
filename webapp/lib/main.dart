@@ -1,14 +1,14 @@
-import 'package:KlangDienst/home_test.dart';
-import 'package:KlangDienst/views/eq_view.dart';
+import 'package:KlangDienst/services/eq_service.dart';
+import 'package:KlangDienst/services/filter_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'controllers/eq_controller.dart';
-import 'views/filter_view.dart';
 import 'views/filter_screen.dart';
 import 'views/home_page.dart';
 
 void main() {
+  Get.put(FilterService());
+  Get.put(EqService());
   runApp(const MyApp());
 }
 
@@ -18,8 +18,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final EqController controller = Get.put(EqController());
-
     return GetMaterialApp(
       title: 'KlangDienst',
       debugShowCheckedModeBanner: false,
