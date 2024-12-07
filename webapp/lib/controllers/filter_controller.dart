@@ -9,9 +9,11 @@ import '../utils/freq_table.dart';
 class FilterController extends GetxController {
   static var activeController = Rx<FilterController?>(null);
 
+  bool isActive() => activeController.value == this;
+
   final filterService = Get.find<FilterService>();
 
-  var response = List.filled(121, 0.0).obs;
+  var response = List.filled(freqs.length, 0.0).obs;
 
   // Type
   var type = FilterType.Bypass.obs;
@@ -21,9 +23,10 @@ class FilterController extends GetxController {
   }
 
   // Frequency
-  final _freq = 68.obs;
-  void incFreq() => _freq.value = min(_freq.value + 1, 120);
-  void decFreq() => _freq.value = max(_freq.value - 1, 0);
+  final int _defaultFreqIdx = 72;
+  final freqIdx = 72.obs;
+  void incFreq() => freqIdx.value = min(freqIdx.value + 1, freqs.length - 5);
+  void decFreq() => freqIdx.value = max(freqIdx.value - 1, 4);
   final freq = '1000'.obs;
   final freqUnit = 'Hz'.obs;
 
@@ -45,7 +48,7 @@ class FilterController extends GetxController {
     activeController.value = this;
     Filter filter = Filter(
       type: type.value,
-      freqIdx: _freq.value,
+      freqIdx: freqIdx.value,
       gain: _gain.value,
       q: _q.value,
     );
@@ -56,8 +59,8 @@ class FilterController extends GetxController {
 
   FilterController() {
     activeController.value = this;
-    ever(_freq, (_) {
-      double f = freqs[_freq.value];
+    ever(freqIdx, (_) {
+      double f = freqs[freqIdx.value];
       if (f >= 2000) {
         f = f / 1000;
         freq.value = f.toStringAsFixed(1);

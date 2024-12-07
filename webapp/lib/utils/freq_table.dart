@@ -1,5 +1,9 @@
 // 1/12th octave (R40) frequency table
 final List<double> freqs = List.unmodifiable([
+  16.0,
+  17.0,
+  18.0,
+  19.0,
   20.0,
   21.2,
   22.4,
@@ -121,6 +125,10 @@ final List<double> freqs = List.unmodifiable([
   18000.0,
   19000.0,
   20000.0,
+  21200.0,
+  22400.0,
+  23600.0,
+  25000.0,
 ]);
 
 final List<double> roundedFreqs = List.unmodifiable([

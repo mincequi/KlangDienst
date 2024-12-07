@@ -18,7 +18,7 @@ class FilterCard extends StatelessWidget {
               ? RoundedRectangleBorder(
                   side: BorderSide(
                     color:
-                        Theme.of(context).colorScheme.secondary, // Border color
+                        Theme.of(context).colorScheme.primary, // Border color
                     width: 1.0, // Border width
                   ),
                   borderRadius: BorderRadius.circular(8.0), // Rounded corners

@@ -1,3 +1,4 @@
+import 'package:KlangDienst/views/widgets/hold_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,16 +25,8 @@ class FilterParam extends StatelessWidget {
         Obx(() => Text(unit.value)),
         //Text(value.value.toString()),
         SizedBox(width: 8),
-        IconButton(
-          visualDensity: VisualDensity(horizontal: -4.0, vertical: 0.0),
-          onPressed: onDecrement,
-          icon: Icon(Icons.remove),
-        ),
-        IconButton(
-          visualDensity: VisualDensity(horizontal: -4.0, vertical: 0.0),
-          onPressed: onIncrement,
-          icon: Icon(Icons.add),
-        ),
+        HoldIconButton(icon: Icon(Icons.remove), onPressed: onDecrement),
+        HoldIconButton(icon: Icon(Icons.add), onPressed: onIncrement)
       ],
     );
   }

@@ -1,4 +1,4 @@
-import 'package:KlangDienst/views/dynamic_grid.dart';
+import 'package:KlangDienst/views/filter_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
