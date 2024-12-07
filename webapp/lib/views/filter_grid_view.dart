@@ -5,8 +5,8 @@ import 'package:KlangDienst/views/widgets/filter_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FilterGridPage extends StatelessWidget {
-  const FilterGridPage({Key? key}) : super(key: key);
+class FilterGridView extends StatelessWidget {
+  const FilterGridView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class FilterGridPage extends StatelessWidget {
 
     // Screen width and spacing calculations
     final screenWidth = MediaQuery.of(context).size.width;
-    const spacing = 0.0;
+    const spacing = 8.0;
 
     return Obx(
       () {

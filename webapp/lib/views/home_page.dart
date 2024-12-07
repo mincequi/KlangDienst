@@ -26,15 +26,15 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(0),
           child: Column(children: [
             EqChart(),
             const SizedBox(height: 4),
-            const FilterGridPage()
+            const FilterGridView(),
           ])),
       floatingActionButton: FloatingActionButton(
         onPressed: _eqService.addFilter,
-        tooltip: 'Increment',
+        tooltip: 'Add Filter',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

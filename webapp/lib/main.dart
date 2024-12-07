@@ -3,7 +3,6 @@ import 'package:KlangDienst/services/filter_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'views/filter_screen.dart';
 import 'views/home_page.dart';
 
 void main() {
@@ -22,16 +21,32 @@ class MyApp extends StatelessWidget {
       title: 'KlangDienst',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: _customColorScheme(),
         useMaterial3: true,
-        dropdownMenuTheme: const DropdownMenuThemeData(
+        /*dropdownMenuTheme: const DropdownMenuThemeData(
           textStyle: TextStyle(color: Colors.amber, fontSize: 12),
-        ),
+        ),*/
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(
+        colorScheme: _customColorScheme(),
+        useMaterial3: true, // For Material 3 design
+      ),
       themeMode: ThemeMode.dark,
       home: HomePage(title: 'KlangDienst'),
       //home: HomePageTest(),
     );
+  }
+
+  ColorScheme _customColorScheme() {
+    // Generate a color scheme using separate seed colors
+    final primaryScheme = ColorScheme.fromSeed(
+        seedColor: Colors.red, brightness: Brightness.dark);
+    final secondaryScheme = ColorScheme.fromSeed(
+        seedColor: Colors.cyan, brightness: Brightness.dark);
+
+    // Merge primary and secondary colors into one color scheme
+    return primaryScheme; /*.copyWith(
+        secondary: secondaryScheme.primary,
+        secondaryContainer: secondaryScheme.primaryContainer);*/
   }
 }

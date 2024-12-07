@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 
 import '../utils/freq_table.dart';
 
-// Controller to manage the states
-// FilterController for individual filter settings
 class FilterController extends GetxController {
+  static var activeController = Rx<FilterController?>(null);
+
   final filterService = Get.find<FilterService>();
 
   var response = List.filled(121, 0.0).obs;
@@ -42,6 +42,7 @@ class FilterController extends GetxController {
   final qUnit = ''.obs;
 
   void _computeResponse() {
+    activeController.value = this;
     Filter filter = Filter(
       type: type.value,
       freqIdx: _freq.value,
@@ -54,20 +55,18 @@ class FilterController extends GetxController {
   }
 
   FilterController() {
+    activeController.value = this;
     ever(_freq, (_) {
       double f = freqs[_freq.value];
-      /*if (f >= 15000) {
-        f = f / 1000;
-        freq.value = f.toStringAsFixed(0);
-        freqUnit.value = 'kHz';
-      } else*/
       if (f >= 2000) {
         f = f / 1000;
         freq.value = f.toStringAsFixed(1);
         freqUnit.value = 'kHz';
-      } else {
-        f = f.roundToDouble();
+      } else if (f >= 50) {
         freq.value = f.toStringAsFixed(0);
+        freqUnit.value = 'Hz';
+      } else {
+        freq.value = f.toStringAsFixed(1);
         freqUnit.value = 'Hz';
       }
       _computeResponse();
