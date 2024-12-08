@@ -44,7 +44,10 @@ class FilterService extends GetxService {
     double w0 = 2 * pi * frequency / _sampleRate;
     double cos_w0 = cos(w0);
     double alpha = sin(w0) / (2 * filter.q);
-    num A = pow(10, filter.gain / 40);
+    num A = pow(
+        10,
+        filter.gainIdx /
+            80.0); // Actually division by 40, but idx is in 2 dB steps
 
     switch (filter.type) {
       case FilterType.Peaking:
@@ -58,11 +61,11 @@ class FilterService extends GetxService {
         break;
       case FilterType.LowPass:
         // Low-pass filter coefficients
-        coeffs.b0 = (1 - cos(w0)) / 2;
-        coeffs.b1 = 1 - cos(w0);
-        coeffs.b2 = (1 - cos(w0)) / 2;
+        coeffs.b0 = (1 - cos_w0) / 2;
+        coeffs.b1 = 1 - cos_w0;
+        coeffs.b2 = (1 - cos_w0) / 2;
         coeffs.a0 = 1 + alpha;
-        coeffs.a1 = -2 * cos(w0);
+        coeffs.a1 = -2 * cos_w0;
         coeffs.a2 = 1 - alpha;
         break;
       case FilterType.HighPass:

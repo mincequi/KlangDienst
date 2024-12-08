@@ -29,7 +29,11 @@ class EqChart extends StatelessWidget {
                   minY: -24.0,
                   maxY: 6.0,
                   gridData: FlGridData(
-                      show: true, horizontalInterval: 3, verticalInterval: 8),
+                      show: true,
+                      horizontalInterval: 3,
+                      verticalInterval: 8,
+                      getDrawingHorizontalLine: _gridLine,
+                      getDrawingVerticalLine: _gridLine),
                   titlesData: FlTitlesData(show: false),
                   borderData: FlBorderData(show: false),
                   lineBarsData: _lineChartBarData(context, _eqService.filters),
@@ -37,6 +41,14 @@ class EqChart extends StatelessWidget {
               )),
         );
       },
+    );
+  }
+
+  FlLine _gridLine(double _) {
+    return FlLine(
+      color: Colors.white.withAlpha(127),
+      strokeWidth: 1.0,
+      dashArray: [4, 8],
     );
   }
 

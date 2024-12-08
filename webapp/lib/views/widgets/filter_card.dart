@@ -1,20 +1,23 @@
 import 'package:KlangDienst/models/filter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import '../../services/eq_service.dart';
 import '/controllers/filter_controller.dart';
 import 'filter_param.dart';
 
 // The Card that displays each filter
 class FilterCard extends StatelessWidget {
-  final FilterController filterController;
+  final FilterController _controller;
+  final _eqService = Get.find<EqService>();
 
-  FilterCard({required this.filterController});
+  FilterCard({required FilterController filterController})
+      : _controller = filterController;
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Card(
-          shape: FilterController.activeController.value == filterController
+    return Obx(
+      () => Card(
+          shape: FilterController.activeController.value == _controller
               ? RoundedRectangleBorder(
                   side: BorderSide(
                     color:
@@ -26,16 +29,18 @@ class FilterCard extends StatelessWidget {
               : null,
           child: InkWell(
               onTap: () {
-                FilterController.activeController.value = filterController;
+                FilterController.activeController.value = _controller;
               },
-              child: Padding(
+              child: /*Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(children: [
-                    Row(
-                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Obx(() => DropdownMenu<FilterType>(
-                              initialSelection: filterController.type.value,
+                  child:*/
+                  Column(children: [
+                Row(
+                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child: Obx(() => DropdownMenu<FilterType>(
+                              initialSelection: _controller.type.value,
                               dropdownMenuEntries: [
                                 FilterType.Bypass,
                                 FilterType.Peaking,
@@ -52,27 +57,39 @@ class FilterCard extends StatelessWidget {
                               }).toList(),
                               onSelected: (value) {
                                 if (value != null) {
-                                  filterController.setFilterType(value);
+                                  _controller.setFilterType(value);
                                 }
                               },
-                            )),
-                      ],
-                    ),
-                    FilterParam(
-                        "F",
-                        filterController.freqUnit,
-                        filterController.freq,
-                        filterController.incFreq,
-                        filterController.decFreq),
-                    FilterParam(
-                        "G",
-                        filterController.gainUnit,
-                        filterController.gain,
-                        filterController.incGain,
-                        filterController.decGain),
-                    FilterParam("Q", filterController.qUnit, filterController.q,
-                        filterController.incQ, filterController.decQ),
-                  ]))),
-        ));
+                              requestFocusOnTap: false,
+                              expandedInsets: EdgeInsets.zero,
+                            ))),
+                    //SizedBox(width: 36),
+                    Column(
+                        //alignment: Alignment.bottomRight,
+                        children: [
+                          IconButton(
+                            visualDensity: VisualDensity.compact,
+                            icon: Icon(
+                              Icons.delete_forever,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .error, // Icon color
+                            ),
+                            onPressed: () {
+                              _eqService.removeFilter(_controller);
+                            },
+                          ),
+                          SizedBox(height: 10),
+                        ]),
+                  ],
+                ),
+                FilterParam("F", _controller.freqEnabled, _controller.freqUnit,
+                    _controller.freq, _controller.incFreq, _controller.decFreq),
+                FilterParam("G", _controller.gainEnabled, _controller.gainUnit,
+                    _controller.gain, _controller.incGain, _controller.decGain),
+                FilterParam("Q", _controller.qEnabled, _controller.qUnit,
+                    _controller.qReadout, _controller.incQ, _controller.decQ),
+              ]))),
+    );
   }
 }

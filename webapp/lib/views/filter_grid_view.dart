@@ -57,5 +57,5 @@ class FilterGridView extends StatelessWidget {
   }
 
   final double _minCardWidth = 196;
-  final double _cardHeight = 192;
+  final double _cardHeight = 176;
 }

@@ -1,11 +1,14 @@
-class FilterModel {
-  double frequency; // Center frequency in Hz
-  double gain; // Gain in dB
-  double qFactor; // Quality factor (bandwidth)
+import 'package:KlangDienst/models/filter.dart';
 
-  FilterModel({
-    required this.frequency,
-    required this.gain,
-    required this.qFactor,
-  });
+class FilterModel {
+  FilterType type = FilterType.Bypass;
+  int freqIdx = 72;
+  int gainIdx = 0;
+  int qIdx = 12;
+
+  FilterModel(
+      {this.type = FilterType.Bypass,
+      this.freqIdx = 72,
+      this.gainIdx = 0,
+      this.qIdx = 12});
 }

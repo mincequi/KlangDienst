@@ -38,7 +38,7 @@ class _HoldIconButtonState extends State<HoldIconButton> {
       onTapUp: (_) => _stopHold(),
       onTapCancel: _stopHold,
       child: IconButton(
-        visualDensity: const VisualDensity(horizontal: -4.0, vertical: 0.0),
+        visualDensity: const VisualDensity(horizontal: 0.0, vertical: 0.0),
         icon: widget.icon,
         onPressed: widget.onPressed, // Required by IconButton but not used
       ),
