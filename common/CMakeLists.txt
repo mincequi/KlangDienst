@@ -14,6 +14,6 @@ PUBLIC
 )
 
 target_link_libraries(common
-PRIVATE
+PUBLIC
   magic_enum::magic_enum
 )

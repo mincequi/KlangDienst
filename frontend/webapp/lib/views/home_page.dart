@@ -1,3 +1,5 @@
+import 'package:KlangDienst/models/filter_model.dart';
+import 'package:KlangDienst/usecases/add_filter.dart';
 import 'package:KlangDienst/views/filter_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +25,8 @@ class HomePage extends StatelessWidget {
             const FilterGridView(),
           ])),
       floatingActionButton: FloatingActionButton(
-        onPressed: _eqService.addFilter,
+        onPressed: () =>
+            AddFilter().call(FilterModel()), //_eqService.addFilter,
         tooltip: 'Add Filter',
         child: const Icon(Icons.add_card_rounded),
       ),

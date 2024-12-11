@@ -17,7 +17,7 @@ class FilterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => Card(
-          shape: FilterController.activeController.value == _controller
+          shape: _controller.isActive()
               ? RoundedRectangleBorder(
                   side: BorderSide(
                     color:

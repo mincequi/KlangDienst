@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:KlangDienst/models/filter_coeffs.dart';
+import 'package:KlangDienst/models/filter_model.dart';
 import 'package:KlangDienst/utils/freq_table.dart';
 import 'package:get/get.dart';
 
 import '../models/filter_type.dart';
 
 class FilterService extends GetxService {
-  List<double> response(Filter filter) {
+  List<double> response(FilterModel filter) {
     var coeffs = this.coeffs(filter);
     List<double> magnitudeDb = [];
     for (double frequency in freqs) {
@@ -36,14 +37,14 @@ class FilterService extends GetxService {
     return magnitudeDb;
   }
 
-  FilterCoeffs coeffs(Filter filter) {
+  FilterCoeffs coeffs(FilterModel filter) {
     FilterCoeffs coeffs = FilterCoeffs();
 
     // Compute normalized frequency (omega_0)
-    double frequency = freqs[filter.freqIdx];
+    double frequency = filter.freq();
     double w0 = 2 * pi * frequency / _sampleRate;
     double cos_w0 = cos(w0);
-    double alpha = sin(w0) / (2 * filter.q);
+    double alpha = sin(w0) / (2 * filter.q());
     num A = pow(
         10,
         filter.gainIdx /

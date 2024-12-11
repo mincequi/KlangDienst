@@ -9,19 +9,51 @@ import '../utils/freq_table.dart';
 
 class FilterController extends GetxController {
   static var activeController = Rx<FilterController?>(null);
-
   bool isActive() => activeController.value == this;
 
-  final filterService = Get.find<FilterService>();
+  final _filterService = Get.find<FilterService>();
 
-  final model = FilterModel().obs;
-  final response = List.filled(freqs.length, 0.0).obs;
+  FilterController() {
+    activeController.value = this;
+    _subscribeToFilterChanges();
+  }
 
-  // Type
-  var type = FilterType.Bypass.obs;
-  void setFilterType(FilterType type_) {
-    type.value = type_;
-    switch (type_) {
+  FilterController.fromModel(FilterModel model) {
+    activeController.value = this;
+    type.value = model.type;
+    freqIdx.value = model.freqIdx;
+    gainIdx.value = model.gainIdx;
+    qIdx.value = model.qIdx;
+    _subscribeToFilterChanges();
+  }
+
+  void _subscribeToFilterChanges() {
+    // We update first before subscribing
+    _updateType();
+    _updateFreq();
+    _updateGain();
+    _updateQ();
+    _onFilterChanged();
+    ever(type, (_) {
+      _updateType();
+      _onFilterChanged();
+    });
+    ever(freqIdx, (_) {
+      _updateFreq();
+      _onFilterChanged();
+    });
+    ever(gainIdx, (_) {
+      _updateGain();
+      _onFilterChanged();
+    });
+    ever(qIdx, (_) {
+      _updateQ();
+      _onFilterChanged();
+    });
+  }
+
+  void _updateType() {
+    switch (type.value) {
       case FilterType.Bypass:
         freqEnabled.value = false;
         gainEnabled.value = false;
@@ -41,7 +73,40 @@ class FilterController extends GetxController {
         qEnabled.value = true;
         break;
     }
-    _onFilterChanged();
+  }
+
+  void _updateFreq() {
+    double f = freqs[freqIdx.value];
+    if (f >= 2000) {
+      f = f / 1000;
+      freq.value = f.toStringAsFixed(1);
+      freqUnit.value = 'kHz';
+    } else if (f >= 50) {
+      freq.value = f.toStringAsFixed(0);
+      freqUnit.value = 'Hz';
+    } else {
+      freq.value = f.toStringAsFixed(1);
+      freqUnit.value = 'Hz';
+    }
+  }
+
+  void _updateGain() {
+    gain.value = (gainIdx.value * 0.5).toStringAsFixed(1);
+  }
+
+  void _updateQ() {
+    q.value = _baseQ / qIdx.value;
+    qReadout.value = q.value.toStringAsFixed(2);
+  }
+
+  // This observable is currently only used to send the filter model to the server
+  final model = FilterModel().obs;
+  final response = List.filled(freqs.length, 0.0).obs;
+
+  // Type
+  var type = FilterType.Bypass.obs;
+  void setFilterType(FilterType type_) {
+    type.value = type_;
   }
 
   // Frequency
@@ -72,13 +137,13 @@ class FilterController extends GetxController {
 
   void _computeResponse() {
     activeController.value = this;
-    Filter filter = Filter(
+    var filter = FilterModel(
       type: type.value,
       freqIdx: freqIdx.value,
       gainIdx: gainIdx.value,
-      q: q.value,
+      qIdx: qIdx.value,
     );
-    final response = filterService.response(filter);
+    final response = _filterService.response(filter);
     this.response.assignAll(response);
     this.response.refresh();
   }
@@ -91,35 +156,6 @@ class FilterController extends GetxController {
       qIdx: qIdx.value,
     );
     _computeResponse();
-  }
-
-  FilterController() {
-    activeController.value = this;
-    ever(freqIdx, (_) {
-      double f = freqs[freqIdx.value];
-      if (f >= 2000) {
-        f = f / 1000;
-        freq.value = f.toStringAsFixed(1);
-        freqUnit.value = 'kHz';
-      } else if (f >= 50) {
-        freq.value = f.toStringAsFixed(0);
-        freqUnit.value = 'Hz';
-      } else {
-        freq.value = f.toStringAsFixed(1);
-        freqUnit.value = 'Hz';
-      }
-      _onFilterChanged();
-    });
-    ever(gainIdx, (_) {
-      // devide gain by 2 to get the actual gain value
-      gain.value = (gainIdx.value * 0.5).toStringAsFixed(1);
-      _onFilterChanged();
-    });
-    ever(qIdx, (_) {
-      q.value = _baseQ / qIdx.value;
-      qReadout.value = q.toStringAsFixed(2);
-      _onFilterChanged();
-    });
   }
 
   static final num _fractionalStep = pow(2, 1.0 / 6.0);

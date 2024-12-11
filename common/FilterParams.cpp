@@ -14,11 +14,17 @@ std::optional<FilterParams> FilterParams::from(std::span<const int8_t> data) {
     if (!type) return std::nullopt;
     if (data[1] < 0 || data[1] >= frequencyTable.size()) return std::nullopt;
 
-    FilterParams params(*type, data[1], data[2], data[3]);
-    params.f = frequencyTable[data[1]];
-    params.g = data[2] * 0.5;
-    params.q = _baseQ / data[3];
+    return FilterParams::from(type.value(), data[1], data[2], data[3]);
+}
+
+FilterParams FilterParams::from(FilterType type, int8_t fIdx, int8_t gIdx, int8_t qIdx) {
+    FilterParams params;
+    params.type = type;
+    params.fIdx = fIdx;
+    params.gIdx = gIdx;
+    params.qIdx = qIdx;
     return params;
 }
 
-FilterParams::FilterParams(FilterType type, int8_t fIdx, int8_t gIdx, int8_t qIdx) : type(type), fIdx(fIdx), gIdx(gIdx), qIdx(qIdx), f(0.0), g(0.0), q(0.0) {}
+float FilterParams::q() const { return _baseQ / qIdx; }
+

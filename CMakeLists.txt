@@ -18,6 +18,7 @@ add_subdirectory(frontend)
 
 target_link_libraries(KlangDienst
 PRIVATE
+  common
   #backend
   frontend
 )
