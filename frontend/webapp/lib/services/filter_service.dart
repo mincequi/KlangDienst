@@ -4,7 +4,7 @@ import 'package:KlangDienst/models/filter_coeffs.dart';
 import 'package:KlangDienst/utils/freq_table.dart';
 import 'package:get/get.dart';
 
-import '../models/filter.dart';
+import '../models/filter_type.dart';
 
 class FilterService extends GetxService {
   List<double> response(Filter filter) {

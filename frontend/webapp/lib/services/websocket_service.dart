@@ -5,6 +5,8 @@ import 'package:KlangDienst/services/eq_service.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../models/filter_type.dart';
+
 class WebsocketService extends GetxService {
   EqService _eqService = Get.find<EqService>();
 
@@ -15,9 +17,26 @@ class WebsocketService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    /*_channel = WebSocketChannel.connect(
-      Uri.parse('ws://localhost:8080'),
-    );*/
+    _channel = WebSocketChannel.connect(
+      Uri.parse('ws://localhost:8033/ws'),
+    );
+    _channel!.stream.forEach((element) {
+      if (element.runtimeType != Int8List) return;
+      if (element.length % 4 != 0) return;
+
+      // Convert Int8List to List<FilterModel>
+      List<FilterModel> filters = [];
+      for (int i = 0; i < element.length; i += 4) {
+        FilterModel model = FilterModel(
+          type: FilterType.values[element[i]],
+          freqIdx: element[i + 1],
+          gainIdx: element[i + 2],
+          qIdx: element[i + 3],
+        );
+        filters.add(model);
+      }
+      //_eqService.filters.value = filters;
+    });
     _eqService.filters.listen((filters) {
       Int8List buffer = Int8List(filters.length * 4);
       for (int i = 0; i < filters.length; i++) {
@@ -27,7 +46,7 @@ class WebsocketService extends GetxService {
         buffer[i * 4 + 2] = model.gainIdx;
         buffer[i * 4 + 3] = model.qIdx;
       }
-      //_channel!.sink.add(buffer);
+      _channel!.sink.add(buffer);
       printBuffer(buffer);
     });
     _eqService.filterChanged.listen((filter) {
@@ -42,7 +61,7 @@ class WebsocketService extends GetxService {
         buffer[2] = model.freqIdx;
         buffer[3] = model.gainIdx;
         buffer[4] = model.qIdx;
-        //_channel!.sink.add(buffer);
+        _channel!.sink.add(buffer);
         printBuffer(buffer);
       }
     });

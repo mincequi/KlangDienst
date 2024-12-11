@@ -17,8 +17,10 @@ CPMAddPackage(
 add_subdirectory(webapp)
 
 add_library(frontend STATIC
-  WebServer.cpp
   WebServer.h
+  WebServer.cpp
+  WebSocketHandler.h
+  WebSocketHandler.cpp
 )
 
 target_compile_definitions(frontend
@@ -27,13 +29,14 @@ PRIVATE
 )
 
 target_include_directories(frontend
-PRIVATE
+PUBLIC
   ${cmakerc_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(frontend
-PRIVATE
+PUBLIC
+  common
   drogon
   webapp
 )

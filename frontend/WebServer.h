@@ -3,14 +3,20 @@
 #include <functional>
 #include <memory>
 
+#include "WebSocketHandler.h"
+
+namespace cmrc {
+class embedded_filesystem;
+}
+
 class WebServer {
 public:
-    WebServer();
+    WebServer(std::shared_ptr<WebSocketHandler> webSocketHandler);
+    ~WebServer();
 
     void start();
 
 private:
-    // pimpl
-    class Impl;
-    std::shared_ptr<Impl> _impl;
+    std::shared_ptr<WebSocketHandler> _webSocketHandler;
+    std::shared_ptr<cmrc::embedded_filesystem> _fs;
 };

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:KlangDienst/models/filter.dart';
+import 'package:KlangDienst/models/filter_type.dart';
 import 'package:KlangDienst/services/filter_service.dart';
 import 'package:get/get.dart';
 

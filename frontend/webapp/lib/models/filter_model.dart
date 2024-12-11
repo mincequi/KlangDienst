@@ -1,4 +1,4 @@
-import 'package:KlangDienst/models/filter.dart';
+import 'package:KlangDienst/models/filter_type.dart';
 
 class FilterModel {
   FilterType type = FilterType.Bypass;

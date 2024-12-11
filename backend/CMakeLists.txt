@@ -1,6 +1,5 @@
 CPMAddPackage(gh:gabime/spdlog@1.15.0)
 CPMAddPackage(gh:Curve/rohrkabel@8.0)
-CPMAddPackage(gh:Neargye/magic_enum@0.9.7)
 CPMAddPackage(gh:victimsnino/ReactivePlusPlus@2.2.0)
 CPMAddPackage(gh:nlohmann/json@3.11.3)
 
@@ -38,7 +37,6 @@ PRIVATE
 target_link_libraries(backend
 PRIVATE
   rohrkabel
-  magic_enum
   spdlog::spdlog
   RPP::rpp
   nlohmann_json::nlohmann_json
