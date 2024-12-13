@@ -99,12 +99,33 @@ KlangDienstDsp::~KlangDienstDsp() {
     pw_filter_destroy(_filter);
 }
 
-void KlangDienstDsp::setFilterParams(uint8_t index, const FilterParams& filterParams) {
+std::vector<FilterParams> KlangDienstDsp::filterParams() const {
+    std::lock_guard<std::mutex> lock(_mutex);
+    std::vector<FilterParams> params;
+    for (const auto& filter : _filters) {
+        params.push_back(filter.filterParams());
+    }
+    return params;
+}
+
+void KlangDienstDsp::setFilterParams(int8_t index, const FilterParams& filterParams) {
     std::lock_guard<std::mutex> lock(_mutex);
     if (index >= _filters.size()) {
         _filters.resize(index + 1);
     }
+    _filters[index].setSampleRate(_sampleRate);
     _filters[index].setFilterParams(filterParams);
+}
+
+void KlangDienstDsp::setFilterParams(const std::vector<FilterParams>& filterParams) {
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (filterParams.size() != _filters.size()) {
+        _filters.resize(filterParams.size());
+    }
+    for (size_t i = 0; i < filterParams.size(); i++) {
+        _filters[i].setSampleRate(_sampleRate);
+        _filters[i].setFilterParams(filterParams[i]);
+    }
 }
 
 void KlangDienstDsp::setSampleRate(uint32_t sampleRate) {
@@ -125,6 +146,6 @@ void KlangDienstDsp::onProcess(AudioChannel channel, const std::span<const float
 
     for (auto& filter : _filters) {
         if (filter.isValid())
-            filter.onProcess(channel, in, out);
+            filter.onProcess(channel, out, out);
     }
 }

@@ -18,6 +18,10 @@ void Biquad::setSampleRate(std::uint32_t rate) {
     updateCoeffs();
 }
 
+FilterParams Biquad::filterParams() const {
+    return _filterParams;
+}
+
 void Biquad::setFilterParams(const FilterParams& filter) {
     if (_filterParams == filter) {
         return;
@@ -68,10 +72,10 @@ bool Biquad::updateCoeffs() {
     double a2 = 0.0;
 
     switch (_filterParams.type) {
-    case FilterParams::Type::Peak: {
-        double A = pow(10, _filterParams.g/40.0);
-        double w0 = 2*M_PI*_filterParams.f/_sampleRate;
-        double alpha = sin(w0)*0.5/_filterParams.q;
+    case FilterType::Peaking: {
+        double A = pow(10, _filterParams.g()/40.0);
+        double w0 = 2*M_PI*_filterParams.f()/_sampleRate;
+        double alpha = sin(w0)*0.5/_filterParams.q();
         double alpha1 = alpha*A;
         double alpha2 = alpha/A;
 
@@ -83,9 +87,9 @@ bool Biquad::updateCoeffs() {
         a2 = ( 1.0 - alpha2 ) / a0;
         break;
     }
-    case FilterParams::Type::LowPass: {
-        double w0 = 2*M_PI*_filterParams.f/_sampleRate;
-        double alpha = sin(w0)*0.5/_filterParams.q;
+    case FilterType::LowPass: {
+        double w0 = 2*M_PI*_filterParams.f()/_sampleRate;
+        double alpha = sin(w0)*0.5/_filterParams.q();
         double cosw0 = cos(w0);
 
         a0 = 1.0 + alpha;
@@ -96,9 +100,9 @@ bool Biquad::updateCoeffs() {
         a2 = ( 1.0 - alpha ) / a0;
         break;
     }
-    case FilterParams::Type::HighPass: {
-        double w0 = 2*M_PI*_filterParams.f/_sampleRate;
-        double alpha = sin(w0)*0.5/_filterParams.q;
+    case FilterType::HighPass: {
+        double w0 = 2*M_PI*_filterParams.f()/_sampleRate;
+        double alpha = sin(w0)*0.5/_filterParams.q();
         double cosw0 = cos(w0);
 
         a0    = 1.0 + alpha;
@@ -109,11 +113,11 @@ bool Biquad::updateCoeffs() {
         a2 = ( 1.0 - alpha  ) / a0;
         break;
     }
-    case FilterParams::Type::LowShelf: {
-        double A = pow(10, _filterParams.g/40.0);
-        double w0 = 2*M_PI*_filterParams.f/_sampleRate;
+    case FilterType::LowShelf: {
+        double A = pow(10, _filterParams.g()/40.0);
+        double w0 = 2*M_PI*_filterParams.f()/_sampleRate;
         double cosW0 = cos(w0);
-        double alpha = sin(w0)*0.5/_filterParams.q;
+        double alpha = sin(w0)*0.5/_filterParams.q();
         double sqrtAalpha2 = 2.0*sqrt(A)*alpha;
 
         a0 = (A+1) + (A-1)*cosW0 + sqrtAalpha2;
@@ -124,11 +128,11 @@ bool Biquad::updateCoeffs() {
         a2 =      ( (A+1) + (A-1)*cosW0 - sqrtAalpha2) / a0;
         break;
     }
-    case FilterParams::Type::HighShelf: {
-        double A = pow(10, _filterParams.g/40.0);
-        double w0 = 2*M_PI*_filterParams.f/_sampleRate;
+    case FilterType::HighShelf: {
+        double A = pow(10, _filterParams.g()/40.0);
+        double w0 = 2*M_PI*_filterParams.f()/_sampleRate;
         double cosW0 = cos(w0);
-        double alpha = sin(w0)*0.5/_filterParams.q;
+        double alpha = sin(w0)*0.5/_filterParams.q();
         double sqrtAalpha2 = 2.0*sqrt(A)*alpha;
 
         a0 = (A+1) - (A-1)*cosW0 + sqrtAalpha2;
@@ -139,9 +143,9 @@ bool Biquad::updateCoeffs() {
         a2 =      ( (A+1) - (A-1)*cosW0 - sqrtAalpha2) / a0;
         break;
     }
-    case FilterParams::Type::Invalid:
-    case FilterParams::Type::AllPass:
-    case FilterParams::Type::Crossover:
+    case FilterType::Bypass:
+    case FilterType::AllPass:
+    case FilterType::Loudness:
         return false;
     }
 

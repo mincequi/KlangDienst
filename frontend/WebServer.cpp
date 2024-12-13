@@ -3,6 +3,8 @@
 #include <cmrc/cmrc.hpp>
 #include <drogon/drogon.h>
 
+#include "WebSocketHandler.h"
+
 using namespace drogon;
 
 CMRC_DECLARE(webapp);

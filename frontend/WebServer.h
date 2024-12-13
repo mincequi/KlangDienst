@@ -1,9 +1,8 @@
 #pragma once
 
-#include <functional>
 #include <memory>
 
-#include "WebSocketHandler.h"
+class WebSocketHandler;
 
 namespace cmrc {
 class embedded_filesystem;

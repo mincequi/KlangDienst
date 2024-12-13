@@ -8,18 +8,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(KlangDienst
   main.cpp
+  README.md
 )
 
 # add dependencies
 include(cmake/CPM.cmake)
-#add_subdirectory(backend)
+add_subdirectory(backend)
 add_subdirectory(common)
 add_subdirectory(frontend)
 
 target_link_libraries(KlangDienst
 PRIVATE
   common
-  #backend
+  backend
   frontend
 )
 

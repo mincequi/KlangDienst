@@ -14,15 +14,22 @@
 
 #include "AudioChannel.h"
 #include "Filter.h"
+#include "FilterRepository.h"
 
 namespace pw = pipewire;
 
-class KlangDienstDsp {
+class KlangDienstDsp : public FilterRepository {
 public:
     KlangDienstDsp(std::shared_ptr<pw::main_loop> loop);
     ~KlangDienstDsp();
 
-    void setFilterParams(uint8_t index, const FilterParams& filterParams);
+    virtual std::vector<FilterParams> filterParams() const override;
+
+    // Set the filter parameters for a given filter index
+    virtual void setFilterParams(int8_t idx, const FilterParams& params) override;
+
+    // Set the filter parameters for all filters
+    virtual void setFilterParams(const std::vector<FilterParams>& params) override;
 
 private:
     void setSampleRate(uint32_t sampleRate);
@@ -47,5 +54,5 @@ private:
     uint32_t _sampleRate = 0;
     std::vector<Filter> _filters;
 
-    std::mutex _mutex;
+    mutable std::mutex _mutex;
 };

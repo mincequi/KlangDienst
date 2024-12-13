@@ -40,6 +40,13 @@ public:
     void setSampleRate(uint32_t rate);
 
     /**
+     * @brief Get the filter parameters.
+     *
+     * @return FilterParams
+     */
+    FilterParams filterParams() const;
+
+    /**
      * @brief Set the filter parameters.
      *
      * The filter parameters are used to calculate the filter coefficients.
