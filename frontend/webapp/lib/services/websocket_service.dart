@@ -50,7 +50,8 @@ class WebsocketService extends GetxService {
       FilterModel model = FilterModel(
         type: FilterType.values[buffer[i]],
         freqIdx: buffer[i + 1],
-        gainIdx: buffer[i + 2] > 127 ? buffer[i + 2] - 256 : buffer[i + 2],
+        gainIdx: (buffer[i + 2] > 127 ? buffer[i + 2] - 256 : buffer[i + 2])
+            .toDouble(),
         qIdx: buffer[i + 3],
       );
       filters.add(model);
@@ -67,7 +68,7 @@ class WebsocketService extends GetxService {
         FilterModel model = filters[i].model.value;
         buffer[i * 4] = model.type.index;
         buffer[i * 4 + 1] = model.freqIdx;
-        buffer[i * 4 + 2] = model.gainIdx;
+        buffer[i * 4 + 2] = model.gainIdx.round();
         buffer[i * 4 + 3] = model.qIdx;
       }
       _channel!.sink.add(buffer);
@@ -83,7 +84,7 @@ class WebsocketService extends GetxService {
         buffer[0] = index;
         buffer[1] = model.type.index;
         buffer[2] = model.freqIdx;
-        buffer[3] = model.gainIdx;
+        buffer[3] = model.gainIdx.round();
         buffer[4] = model.qIdx;
         _channel!.sink.add(buffer);
         _printBuffer(buffer);

@@ -20,6 +20,7 @@
 #include "backend/usecases/BuildGraphUseCase.h"
 #include "backend/usecases/LinkNodesUseCase.h"
 #include "frontend/WebServer.h"
+#include "frontend/WebSocketHandler.h"
 
 bool doRun = true;
 

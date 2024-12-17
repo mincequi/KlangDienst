@@ -41,6 +41,7 @@ const std::vector<double> frequencyTable {
     25000.0
 };
 
+/*
 // Renard R40 least rounded
 const std::vector<double> qTable {
     0.100,   0.106,  0.112,  0.118,
@@ -74,3 +75,4 @@ const std::vector<double> qTable {
     40.0,    42.5,   45.0,   47.5,
     50.0
 };
+*/

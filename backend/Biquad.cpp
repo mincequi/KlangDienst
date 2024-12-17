@@ -72,8 +72,12 @@ bool Biquad::updateCoeffs() {
     double a2 = 0.0;
 
     switch (_filterParams.type) {
+    case FilterType::Gain:
+        a0 = 1.0;
+        b0 = pow(10, _filterParams.g() / 20.0); // Gain needs division by 20
+        break;
     case FilterType::Peaking: {
-        double A = pow(10, _filterParams.g()/40.0);
+        double A = pow(10, _filterParams.g() / 40.0);
         double w0 = 2*M_PI*_filterParams.f()/_sampleRate;
         double alpha = sin(w0)*0.5/_filterParams.q();
         double alpha1 = alpha*A;

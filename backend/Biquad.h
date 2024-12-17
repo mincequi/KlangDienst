@@ -19,6 +19,11 @@ public:
         AllPass,
     };
 
+    struct Coeffs {
+        float b0 = 0.0, b1 = 0.0, b2 = 0.0;
+        float a1 = 0.0, a2 = 0.0;
+    };
+
     Biquad();
 
     /**
@@ -71,6 +76,13 @@ public:
      */
     bool isValid() const;
 
+    /**
+     * @brief Get the coeffs of the biquad.
+     *
+     * @return Coeffs
+     */
+    inline const Coeffs& coeffs() const { return _coeffs; }
+
 private:
     bool updateCoeffs();
 
@@ -79,10 +91,6 @@ private:
     uint32_t _sampleRate = 0;
     FilterParams _filterParams;
 
-    struct Coeffs {
-        float b0 = 0.0, b1 = 0.0, b2 = 0.0;
-        float a1 = 0.0, a2 = 0.0;
-    };
     Coeffs _coeffs;
 
     // We have a history for each channel and cascade

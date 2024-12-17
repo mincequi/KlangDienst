@@ -4,8 +4,9 @@ CPMAddPackage(gh:victimsnino/ReactivePlusPlus@2.2.0)
 CPMAddPackage(gh:nlohmann/json@3.11.3)
 
 add_library(backend STATIC
-  #main.cpp
   AudioChannel.h
+  Biquad.h
+  Biquad.cpp
   KlangDienstDsp.h
   KlangDienstDsp.cpp
   KlangDienstSink.h
@@ -21,8 +22,6 @@ add_library(backend STATIC
   usecases/BuildGraphUseCase.h
   usecases/LinkNodesUseCase.h
   Filter.h
-  Biquad.h
-  Biquad.cpp
   Filter.cpp
 )
 

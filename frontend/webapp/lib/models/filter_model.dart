@@ -7,7 +7,7 @@ import '../utils/freq_table.dart';
 class FilterModel {
   FilterType type = FilterType.Bypass;
   int freqIdx = 72;
-  int gainIdx = 0;
+  double gainIdx = 0;
   int qIdx = 12;
 
   double freq() => freqs[freqIdx];

@@ -48,6 +48,7 @@ class FilterCard extends StatelessWidget {
                                 FilterType.HighPass,
                                 FilterType.LowShelf,
                                 FilterType.HighShelf,
+                                FilterType.Loudness,
                               ].map((filter) {
                                 return DropdownMenuEntry<FilterType>(
                                   value: filter,

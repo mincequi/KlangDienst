@@ -22,7 +22,7 @@ class FilterController extends GetxController {
     activeController.value = this;
     type.value = model.type;
     freqIdx.value = model.freqIdx;
-    gainIdx.value = model.gainIdx;
+    gainIdx.value = model.gainIdx.toInt();
     qIdx.value = model.qIdx;
     _subscribeToFilterChanges();
   }
@@ -58,6 +58,7 @@ class FilterController extends GetxController {
         freqEnabled.value = false;
         gainEnabled.value = false;
         qEnabled.value = false;
+        gainUnit.value = 'dB';
         break;
       case FilterType.Peaking:
       case FilterType.LowShelf:
@@ -65,14 +66,36 @@ class FilterController extends GetxController {
         freqEnabled.value = true;
         gainEnabled.value = true;
         qEnabled.value = true;
+        gainUnit.value = 'dB';
         break;
       case FilterType.LowPass:
       case FilterType.HighPass:
         freqEnabled.value = true;
         gainEnabled.value = false;
         qEnabled.value = true;
+        gainUnit.value = 'dB';
+        break;
+      case FilterType.Loudness:
+        freqEnabled.value = false;
+        gainEnabled.value = true;
+        qEnabled.value = false;
+        gainIdx.value = max(gainIdx.value, 0);
+        gainUnit.value = 'phon';
+        break;
+      case FilterType.AllPass:
+        freqEnabled.value = true;
+        gainEnabled.value = false;
+        qEnabled.value = true;
+        gainUnit.value = 'dB';
+        break;
+      case FilterType.Gain:
+        freqEnabled.value = false;
+        gainEnabled.value = true;
+        qEnabled.value = false;
+        gainUnit.value = 'dB';
         break;
     }
+    gainIdx.refresh();
   }
 
   void _updateFreq() {
@@ -91,6 +114,10 @@ class FilterController extends GetxController {
   }
 
   void _updateGain() {
+    if (type.value == FilterType.Loudness) {
+      gain.value = gainIdx.value.toString();
+      return;
+    }
     gain.value = (gainIdx.value * 0.5).toStringAsFixed(1);
   }
 
@@ -120,8 +147,22 @@ class FilterController extends GetxController {
 
   // Gain
   final gainIdx = RxInt(0);
-  void incGain() => gainIdx.value = min(gainIdx.value + 1, 12);
-  void decGain() => gainIdx.value = max(gainIdx.value - 1, -48);
+  void incGain() {
+    if (type.value == FilterType.Loudness) {
+      gainIdx.value = min(gainIdx.value + 1, 40);
+      return;
+    }
+    gainIdx.value = min(gainIdx.value + 1, 12);
+  }
+
+  void decGain() {
+    if (type.value == FilterType.Loudness) {
+      gainIdx.value = max(gainIdx.value - 1, 0);
+      return;
+    }
+    gainIdx.value = max(gainIdx.value - 1, -48);
+  }
+
   final gain = '0.0'.obs;
   final gainUnit = 'dB'.obs;
   final gainEnabled = false.obs;
@@ -140,7 +181,7 @@ class FilterController extends GetxController {
     var filter = FilterModel(
       type: type.value,
       freqIdx: freqIdx.value,
-      gainIdx: gainIdx.value,
+      gainIdx: gainIdx.value.toDouble(),
       qIdx: qIdx.value,
     );
     final response = _filterService.response(filter);
@@ -152,7 +193,7 @@ class FilterController extends GetxController {
     model.value = FilterModel(
       type: type.value,
       freqIdx: freqIdx.value,
-      gainIdx: gainIdx.value,
+      gainIdx: gainIdx.value.toDouble(),
       qIdx: qIdx.value,
     );
     _computeResponse();

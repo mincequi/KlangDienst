@@ -18,13 +18,14 @@ public:
     bool isValid() const;
     FilterParams filterParams() const;
     void setFilterParams(const FilterParams& params);
-    void setCascadeCount(uint8_t count);
+    //void setCascadeCount(uint8_t count);
     void setSampleRate(uint32_t rate);
 
 private:
     friend class KlangDienstDsp;
     void onProcess(AudioChannel channel, const std::span<const float>& in, const std::span<float>& out);
 
-    // TODO: can be more than one
-    Biquad _biquad;
+    uint32_t _sampleRate;
+    FilterParams _filterParams;
+    std::vector<Biquad> _biquads;
 };
