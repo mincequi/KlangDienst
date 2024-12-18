@@ -2,13 +2,13 @@
 
 #include <magic_enum/magic_enum.hpp>
 
-#include "common/FilterRepository.h"
+#include "common/Dsp.h"
 #include "frontend/WebServer.h"
 #include "frontend/WebSocketHandler.h"
 
 using namespace std;
 
-class Dsp : public FilterRepository {
+class ExampleDsp : public Dsp {
     virtual std::vector<FilterParams> filterParams() const {
         return _filterParams;
     }
@@ -32,7 +32,7 @@ class Dsp : public FilterRepository {
 };
 
 int main(int argc, char *argv[]) {
-    Dsp dsp;
+    ExampleDsp dsp;
     auto webSocketHandler = std::make_shared<WebSocketHandler>(dsp);
     WebServer webServer(webSocketHandler);
     webServer.start();

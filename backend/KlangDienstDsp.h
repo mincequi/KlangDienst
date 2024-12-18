@@ -13,12 +13,12 @@
 #include <rohrkabel/loop.hpp>
 
 #include "AudioChannel.h"
+#include "Dsp.h"
 #include "Filter.h"
-#include "FilterRepository.h"
 
 namespace pw = pipewire;
 
-class KlangDienstDsp : public FilterRepository {
+class KlangDienstDsp : public Dsp {
 public:
     KlangDienstDsp(std::shared_ptr<pw::main_loop> loop);
     ~KlangDienstDsp();
@@ -53,6 +53,9 @@ private:
 
     uint32_t _sampleRate = 0;
     std::vector<Filter> _filters;
+
+    float _levelDb = 0.0f;
+    uint32_t _sampleCount = 0;
 
     mutable std::mutex _mutex;
 };

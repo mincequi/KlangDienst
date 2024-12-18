@@ -5,6 +5,9 @@
 
 using namespace spdlog;
 
+static const double gainMax = 18.53;
+static const double gainFactor = -2.0/3.0;
+
 Filter::Filter() {
 }
 
@@ -34,11 +37,12 @@ void Filter::setFilterParams(const FilterParams& params) {
         //f1: 40, g1: 11, q1: 0.863695,
         //f2: 100, g2: 11, q2: 0.308462
         //f1: 12500, g1: 8, q1: 1.43949
+        // this results at a max gain of 18.53dB @40Hz
         _biquads.resize(4);
-        _biquads[0].setFilterParams(FilterParams::from(FilterType::Gain,      1, -18.53 * params.gIdx / 20.0, params.qIdx));
-        _biquads[1].setFilterParams(FilterParams::from(FilterType::Peaking,  16,   11.0 * params.gIdx / 20.0, 10));
-        _biquads[2].setFilterParams(FilterParams::from(FilterType::Peaking,  32,   11.0 * params.gIdx / 20.0, 28));
-        _biquads[3].setFilterParams(FilterParams::from(FilterType::Peaking, 116,    8.0 * params.gIdx / 20.0,  6));
+        _biquads[0].setFilterParams(FilterParams::from(FilterType::Peaking,  16,    11.0 * params.gIdx / 20.0, 10));
+        _biquads[1].setFilterParams(FilterParams::from(FilterType::Peaking,  32,    11.0 * params.gIdx / 20.0, 28));
+        _biquads[2].setFilterParams(FilterParams::from(FilterType::Peaking, 116,     8.0 * params.gIdx / 20.0,  6));
+        _biquads[3].setFilterParams(FilterParams::from(FilterType::Gain,      1, gainMax * params.gIdx / 20.0 * gainFactor,  1));
         _biquads[0].setSampleRate(_sampleRate);
         _biquads[1].setSampleRate(_sampleRate);
         _biquads[2].setSampleRate(_sampleRate);

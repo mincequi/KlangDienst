@@ -7,6 +7,8 @@
 #include <spa/param/latency.h>
 #include <spdlog/spdlog.h>
 
+#include <DspStats.h>
+
 using namespace std::placeholders;
 using namespace spdlog;
 
@@ -129,6 +131,7 @@ void KlangDienstDsp::setFilterParams(const std::vector<FilterParams>& filterPara
 }
 
 void KlangDienstDsp::setSampleRate(uint32_t sampleRate) {
+    // setSampleRate is already locked by on_process
     if (_sampleRate == sampleRate) {
         return;
     }
@@ -141,11 +144,42 @@ void KlangDienstDsp::setSampleRate(uint32_t sampleRate) {
 }
 
 void KlangDienstDsp::onProcess(AudioChannel channel, const std::span<const float>& in, const std::span<float>& out) {
-    std::lock_guard<std::mutex> lock(_mutex);
     std::copy(in.begin(), in.end(), out.begin());
 
-    for (auto& filter : _filters) {
-        if (filter.isValid())
-            filter.onProcess(channel, out, out);
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        for (auto& filter : _filters) {
+            if (filter.isValid())
+                filter.onProcess(channel, out, out);
+        }
+    }
+
+    // Only check left channel
+    if (channel != AudioChannel::FL) {
+        return;
+    }
+
+    // Only check every second
+    _sampleCount += out.size();
+    if (_sampleCount < _sampleRate) {
+        return;
+    }
+
+    _sampleCount = 0;
+    float max = 0.0f;
+    for (const auto& sample : out) {
+        max = std::max(max, std::abs(sample));
+    }
+    float levelDb = round(20.0f * std::log10(max));
+    if (abs(levelDb - _levelDb) > 2.5) {
+        _levelDb = levelDb;
+        info("level: {} dB", _levelDb);
+
+        /*
+        DspStats stats {
+            .levelDb = (int8_t)round(2.0 * _levelDb),
+        };
+        notifyStats(stats);
+        */
     }
 }

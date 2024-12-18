@@ -1,6 +1,5 @@
 CPMAddPackage(gh:gabime/spdlog@1.15.0)
 CPMAddPackage(gh:Curve/rohrkabel@8.0)
-CPMAddPackage(gh:victimsnino/ReactivePlusPlus@2.2.0)
 CPMAddPackage(gh:nlohmann/json@3.11.3)
 
 add_library(backend STATIC
@@ -35,7 +34,6 @@ PUBLIC
 target_link_libraries(backend
 PUBLIC
   rohrkabel
-  RPP::rpp
   spdlog::spdlog
 
 PRIVATE
