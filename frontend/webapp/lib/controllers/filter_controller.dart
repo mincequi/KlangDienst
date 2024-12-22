@@ -76,9 +76,11 @@ class FilterController extends GetxController {
         gainUnit.value = 'dB';
         break;
       case FilterType.Loudness:
-        freqEnabled.value = false;
+        freqEnabled.value = true;
         gainEnabled.value = true;
         qEnabled.value = false;
+        // Round freqIndex to nearest of multiple of 4
+        freqIdx.value = ((freqIdx.value / 4).round() * 4).clamp(16, 28);
         gainIdx.value = max(gainIdx.value, 0);
         gainUnit.value = 'phon';
         break;
@@ -104,7 +106,7 @@ class FilterController extends GetxController {
       f = f / 1000;
       freq.value = f.toStringAsFixed(1);
       freqUnit.value = 'kHz';
-    } else if (f >= 50) {
+    } else if (f >= 100) {
       freq.value = f.toStringAsFixed(0);
       freqUnit.value = 'Hz';
     } else {
@@ -139,8 +141,22 @@ class FilterController extends GetxController {
   // Frequency
   static const int _defaultFreqIdx = 72;
   final freqIdx = RxInt(_defaultFreqIdx);
-  void incFreq() => freqIdx.value = min(freqIdx.value + 1, freqs.length - 5);
-  void decFreq() => freqIdx.value = max(freqIdx.value - 1, 4);
+  void incFreq() {
+    if (type.value == FilterType.Loudness) {
+      freqIdx.value = min(freqIdx.value + 4, 28);
+      return;
+    }
+    freqIdx.value = min(freqIdx.value + 1, freqs.length - 5);
+  }
+
+  void decFreq() {
+    if (type.value == FilterType.Loudness) {
+      freqIdx.value = max(freqIdx.value - 4, 16);
+      return;
+    }
+    freqIdx.value = max(freqIdx.value - 1, 4);
+  }
+
   final freq = '1000'.obs;
   final freqUnit = 'Hz'.obs;
   final freqEnabled = false.obs;
