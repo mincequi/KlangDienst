@@ -1,0 +1,12 @@
+[Unit]
+Description=KlangDienst Service
+After=network.target
+
+[Service]
+User=KlangDienst
+ExecStart=@CMAKE_INSTALL_PREFIX@/bin/KlangDienst
+Restart=always
+Environment=LANG=C.UTF-8
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    remove)
+        # Stop the service if it is still running
+        if systemctl is-active --quiet KlangDienst; then
+            systemctl stop KlangDienst
+        fi
+
+        # Disable the service
+        systemctl disable KlangDienst || true
+        ;;
+    purge)
+        # Remove the user and group if no longer needed
+        if getent passwd KlangDienst >/dev/null; then
+            userdel KlangDienst || true
+        fi
+
+        # Remove the data directory
+        if [ -d /var/lib/KlangDienst ]; then
+            rm -rf /var/lib/KlangDienst
+        fi
+        ;;
+esac
+
+exit 0

@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+# Add the KlangDienst user if it doesn't exist
+if ! id -u KlangDienst >/dev/null 2>&1; then
+    useradd --system --home /nonexistent --shell /usr/sbin/nologin KlangDienst
+fi
+
+# Create the required directory and set ownership and permissions
+install -d -m 0750 -o KlangDienst -g KlangDienst /var/lib/KlangDienst
+
+exit 0
