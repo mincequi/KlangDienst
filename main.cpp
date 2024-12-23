@@ -19,6 +19,7 @@
 #include "backend/registries/PortRegistry.h"
 #include "backend/usecases/BuildGraphUseCase.h"
 #include "backend/usecases/LinkNodesUseCase.h"
+#include "common/Persistence.h"
 #include "frontend/WebServer.h"
 #include "frontend/WebSocketHandler.h"
 
@@ -42,7 +43,8 @@ int main(int argc, char *argv[]) {
     pw_loop_add_signal(main_loop->loop(), SIGINT, do_quit, main_loop->get());
     pw_loop_add_signal(main_loop->loop(), SIGTERM, do_quit, main_loop->get());
 
-    KlangDienstDsp dsp(main_loop);
+    Persistence persistence;
+    KlangDienstDsp dsp(main_loop, persistence);
     KlangDienstSink sink(core);
 
     // Find ports to nodes

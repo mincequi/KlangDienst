@@ -8,6 +8,7 @@
 #include <spdlog/spdlog.h>
 
 #include <DspStats.h>
+#include <Persistence.h>
 
 using namespace std::placeholders;
 using namespace spdlog;
@@ -51,7 +52,8 @@ static const struct pw_filter_events filter_events = {
     .process = on_process,
 };
 
-KlangDienstDsp::KlangDienstDsp(std::shared_ptr<pw::main_loop> loop) : _loop(loop) {
+KlangDienstDsp::KlangDienstDsp(std::shared_ptr<pw::main_loop> loop, Persistence& persistence) : _loop(loop), _persistence(persistence) {
+    setFilterParams(_persistence.filterParams());
     _filter = pw_filter_new_simple(
                 loop->loop(),
                 "KlangDienstDsp",
@@ -117,6 +119,8 @@ void KlangDienstDsp::setFilterParams(int8_t index, const FilterParams& filterPar
     }
     _filters[index].setSampleRate(_sampleRate);
     _filters[index].setFilterParams(filterParams);
+
+    _persistence.setFilterParams(index, filterParams);
 }
 
 void KlangDienstDsp::setFilterParams(const std::vector<FilterParams>& filterParams) {
@@ -128,6 +132,8 @@ void KlangDienstDsp::setFilterParams(const std::vector<FilterParams>& filterPara
         _filters[i].setSampleRate(_sampleRate);
         _filters[i].setFilterParams(filterParams[i]);
     }
+
+    _persistence.setFilterParams(filterParams);
 }
 
 void KlangDienstDsp::setSampleRate(uint32_t sampleRate) {

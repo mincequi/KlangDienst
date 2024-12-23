@@ -18,9 +18,11 @@
 
 namespace pw = pipewire;
 
+class Persistence;
+
 class KlangDienstDsp : public Dsp {
 public:
-    KlangDienstDsp(std::shared_ptr<pw::main_loop> loop);
+    KlangDienstDsp(std::shared_ptr<pw::main_loop> loop, Persistence& persistence);
     ~KlangDienstDsp();
 
     virtual std::vector<FilterParams> filterParams() const override;
@@ -42,6 +44,8 @@ private:
     };
 
     std::shared_ptr<pw::main_loop> _loop;
+    Persistence& _persistence;
+
     pw_filter* _filter;
     const struct spa_pod* _params[1];
     uint8_t _buffer[1024];
