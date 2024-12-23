@@ -1,6 +1,6 @@
 #include "Filter.h"
 
-#include <magic_enum/magic_enum.hpp>
+#include <rfl/enums.hpp>
 #include <spdlog/spdlog.h>
 
 using namespace spdlog;
@@ -28,7 +28,7 @@ void Filter::setFilterParams(const FilterParams& params) {
         return;
     }
 
-    info("updated filter> type: {}, f: {}, g: {}, q: {},", magic_enum::enum_name(params.type), params.f(), params.g(), params.q());
+    info("updated filter> type: {}, f: {}, g: {}, q: {},", rfl::enum_to_string(params.type), params.f(), params.g(), params.q());
     _filterParams = params;
 
     switch (params.type) {

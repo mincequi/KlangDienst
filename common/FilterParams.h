@@ -10,11 +10,12 @@ struct FilterParams {
     static std::optional<FilterParams> from(std::span<const int8_t> data);
     static FilterParams from(FilterType type, int8_t fIdx, double gIdx, int8_t qIdx);
 
-    FilterParams() = default;
+    // This does not work with reflect-cpp
+    //FilterParams() = default;
 
     FilterType type = FilterType::Bypass;
     int8_t fIdx = 0;
-    double gIdx = 0;
+    double gIdx = 0; // Although we use 0.5 increments for gain on the ui, we have better resolution internally.
     int8_t qIdx = 0;
 
     inline double f() const { return frequencyTable[fIdx]; }
